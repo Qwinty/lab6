@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Есипов М.М. 09-254 - Todo List</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">Список задач</h1>
+
+      <div class="new-task">
+        <h2>Новая задача</h2>
+        <div class="task-input">
+          <input type="text" placeholder="Название задачи..." />
+          <button class="add-btn">+ Добавить</button>
+        </div>
+      </div>
+
+      <div class="tasks-container">
+        <div class="task-column">
+          <div class="column-header">Бэклог</div>
+          <div class="tasks" id="backlog">
+            <div class="task">Выучить JS</div>
+            <div class="task">Выучить React</div>
+            <div class="task">Сделать домашку</div>
+          </div>
+        </div>
+
+        <div class="task-column">
+          <div class="column-header">В процессе</div>
+          <div class="tasks" id="in-progress">
+            <div class="task">Выпить смузи</div>
+            <div class="task">Попить воды</div>
+          </div>
+        </div>
+
+        <div class="task-column">
+          <div class="column-header">Готово</div>
+          <div class="tasks" id="done">
+            <div class="task">Позвонить маме</div>
+            <div class="task">Погладить кота</div>
+          </div>
+        </div>
+
+        <div class="task-column">
+          <div class="column-header">Корзина</div>
+          <div class="tasks" id="trash">
+            <div class="task">Сходить почитать</div>
+            <div class="task">Прочитать Войну и Мир</div>
+          </div>
+          <button class="clear-btn">✕ Очистить</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="add-floating-btn">+</button>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>
