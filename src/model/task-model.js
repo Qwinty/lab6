@@ -55,6 +55,66 @@ export class TaskModel {
   }
 
   /**
+   * Updates the status of a task
+   * @param {string | number} taskId - The ID of the task to update
+   * @param {string} newStatus - The new status for the task
+   */
+  updateTaskStatus(taskId, newStatus) {
+    const task = this.#tasks.find((t) => t.id == taskId); // Use == for type coercion as taskId might be a string
+    if (task && task.status !== newStatus) {
+      task.status = newStatus;
+      this._notify();
+    }
+  }
+
+  /**
+   * Moves a task to a new status and position
+   * @param {string | number} taskId - The ID of the task to move
+   * @param {string} newStatus - The new status for the task
+   * @param {string | number | null} targetBeforeId - The ID of the task before which to insert, or null to append
+   */
+  moveTask(taskId, newStatus, targetBeforeId) {
+    // Find the task to move
+    const taskIndex = this.#tasks.findIndex((t) => t.id == taskId);
+    if (taskIndex === -1) return;
+
+    // Remove the task from its current position
+    const [task] = this.#tasks.splice(taskIndex, 1);
+
+    // Update its status
+    task.status = newStatus;
+
+    if (targetBeforeId) {
+      // Find the index of the target task to insert before
+      const targetIndex = this.#tasks.findIndex((t) => t.id == targetBeforeId);
+      if (targetIndex !== -1) {
+        // Insert the task at the target position
+        this.#tasks.splice(targetIndex, 0, task);
+      } else {
+        // If target not found, append to the end
+        this.#tasks.push(task);
+      }
+    } else {
+      // Find the last task with the same status
+      const lastTaskWithStatus = [...this.#tasks]
+        .reverse()
+        .find((t) => t.status === newStatus);
+
+      if (lastTaskWithStatus) {
+        // Insert after the last task with the same status
+        const insertIndex = this.#tasks.indexOf(lastTaskWithStatus) + 1;
+        this.#tasks.splice(insertIndex, 0, task);
+      } else {
+        // If no tasks with this status, append to the end
+        this.#tasks.push(task);
+      }
+    }
+
+    // Notify observers about the change
+    this._notify();
+  }
+
+  /**
    * Clears all tasks from trash
    */
   clearTrash() {

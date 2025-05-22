@@ -102,7 +102,7 @@ export class TasksBoardPresenter {
       ]);
       appendElement(columnDiv, columnHeaderDiv);
 
-      const taskListComponent = new TaskList();
+      const taskListComponent = new TaskList(this.#handleTaskDrop.bind(this));
       const taskListElement = taskListComponent.getElement();
       taskListElement.id = columnData.id;
       appendElement(columnDiv, taskListElement);
@@ -178,6 +178,16 @@ export class TasksBoardPresenter {
    */
   #handleTrashClearClick() {
     this.#taskModel.clearTrash();
+  }
+
+  /**
+   * Handler for task drop event
+   * @param {string | number} taskId - ID of the task being dropped
+   * @param {string} newStatus - New status for the task
+   * @param {string | number | null} targetTaskId - ID of the task before which to insert the dropped task, or null
+   */
+  #handleTaskDrop(taskId, newStatus, targetTaskId) {
+    this.#taskModel.moveTask(taskId, newStatus, targetTaskId);
   }
 
   /**

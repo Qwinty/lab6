@@ -180,6 +180,15 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* Styles for dragging */
+.task.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    transform: scale(1.02);
+    z-index: 100;
+}
+
 /* Clear button */
 .trash-clear-button {
     background-color: #d13328;
