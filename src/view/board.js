@@ -1,20 +1,10 @@
-import { createElement } from "../framework/render.js";
+import { AbstractComponent } from "../framework/view/abstract-component.js";
 
-export class Board {
+/**
+ * Компонент доски для размещения колонок задач
+ */
+export class Board extends AbstractComponent {
   getTemplate() {
     return '<div class="tasks-container"></div>';
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement("div");
-      this.element.innerHTML = this.getTemplate();
-      this.element = this.element.firstChild;
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

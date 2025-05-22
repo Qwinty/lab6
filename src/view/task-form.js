@@ -1,6 +1,9 @@
-import { createElement } from "../framework/render.js";
+import { AbstractComponent } from "../framework/view/abstract-component.js";
 
-export class TaskForm {
+/**
+ * Компонент формы для добавления новых задач
+ */
+export class TaskForm extends AbstractComponent {
   getTemplate() {
     return `
       <div class="task-input">
@@ -12,14 +15,10 @@ export class TaskForm {
 
   getElement() {
     if (!this.element) {
-      this.element = createElement("div");
+      this.element = document.createElement("div");
       this.element.innerHTML = this.getTemplate();
       this.element = this.element.firstElementChild;
     }
     return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

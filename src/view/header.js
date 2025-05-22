@@ -1,20 +1,10 @@
-import { createElement } from "../framework/render.js";
+import { AbstractComponent } from "../framework/view/abstract-component.js";
 
-export class Header {
+/**
+ * Компонент заголовка для названия страницы
+ */
+export class Header extends AbstractComponent {
   getTemplate() {
     return "<h1 class='title'>Список задач</h1>";
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement("div");
-      this.element.innerHTML = this.getTemplate();
-      this.element = this.element.firstChild;
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

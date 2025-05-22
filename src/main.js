@@ -7,31 +7,31 @@ import { TaskModel } from "./model/task-model.js";
 const siteBodyElement = document.body;
 const siteContainerElement = siteBodyElement.querySelector(".container");
 
-// Remove static header h1
+// Удалить статический заголовок h1
 const staticTitle = siteContainerElement.querySelector("h1.title");
 if (staticTitle) {
   staticTitle.remove();
 }
 
-// Get a reference to the .new-task section, which will be the reference for inserting the header
+// Получить ссылку на секцию .new-task, которая будет точкой привязки для вставки заголовка
 const newTaskSection = siteContainerElement.querySelector(".new-task");
 
-// Header
+// Заголовок
 const headerComponent = new Header();
-// Insert the header before the .new-task section to ensure correct order
+// Вставить заголовок перед секцией .new-task для обеспечения правильного порядка
 if (newTaskSection) {
   siteContainerElement.insertBefore(
     headerComponent.getElement(),
     newTaskSection
   );
 } else {
-  // Fallback if .new-task is not found (should not happen with current index.html)
+  // Запасной вариант, если .new-task не найден (не должно произойти с текущим index.html)
   appendElement(siteContainerElement, headerComponent.getElement());
 }
 
-// Task Form
+// Форма задачи
 const taskFormComponent = new TaskForm();
-// Insert TaskForm after h2
+// Вставить TaskForm после h2
 const newTaskHeading = newTaskSection.querySelector("h2");
 console.log("newTaskHeading", newTaskHeading);
 
@@ -43,10 +43,10 @@ if (newTaskHeading) {
   console.log("Appended task form to newTaskSection");
 }
 
-// Initialize the model
+// Инициализировать модель
 const taskModel = new TaskModel();
 
-// Initialize the board presenter with the model
+// Инициализировать презентер доски задач с моделью
 const tasksBoardPresenter = new TasksBoardPresenter(
   siteContainerElement,
   taskModel

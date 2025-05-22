@@ -4,39 +4,45 @@ import { Task } from "../view/task.js";
 import { appendElement, createElement } from "../framework/render.js";
 import { TaskStatus, TaskStatusNames } from "../const.js";
 import { TrashClearButton } from "../view/trash-clear-button.js";
+import { EmptyTaskList } from "../view/empty-task-list.js";
 
 export class TasksBoardPresenter {
+  #boardContainer = null;
+  #boardComponent = null;
+  #taskModel = null;
+  #boardTasks = [];
+
   constructor(boardContainer, taskModel) {
-    this.boardContainer = boardContainer;
-    this.boardComponent = new Board();
-    this.taskModel = taskModel;
-    this.boardTasks = [];
+    this.#boardContainer = boardContainer;
+    this.#boardComponent = new Board();
+    this.#taskModel = taskModel;
+    this.#boardTasks = [];
   }
 
   init() {
-    // Get tasks from model
-    this.boardTasks = this.taskModel.getTasks();
+    // Получить задачи из модели
+    this.#boardTasks = this.#taskModel.tasks;
 
-    // Replace static tasks container with the board component's element
+    // Заменить статический контейнер задач элементом компонента доски
     const staticTasksContainerElement =
-      this.boardContainer.querySelector(".tasks-container");
-    const boardElementFromComponent = this.boardComponent.getElement();
+      this.#boardContainer.querySelector(".tasks-container");
+    const boardElementFromComponent = this.#boardComponent.getElement();
 
     if (staticTasksContainerElement) {
-      // Ensure the static container is empty before replacing it
+      // Убедиться, что статический контейнер пуст перед заменой
       const existingStaticTaskColumns =
         staticTasksContainerElement.querySelectorAll(".task-column");
       existingStaticTaskColumns.forEach((column) => column.remove());
       staticTasksContainerElement.replaceWith(boardElementFromComponent);
     } else {
-      // Fallback: if static container not found, append to main container
-      appendElement(this.boardContainer, boardElementFromComponent);
+      // Запасной вариант: если статический контейнер не найден, добавить к основному контейнеру
+      appendElement(this.#boardContainer, boardElementFromComponent);
     }
 
-    // boardElement will be used to append the task columns.
+    // boardElement будет использоваться для добавления колонок задач.
     const boardElement = boardElementFromComponent;
 
-    // Task Lists and Tasks
+    // Списки задач и задачи
     const taskColumnsData = [
       {
         title: TaskStatusNames[TaskStatus.BACKLOG],
@@ -69,23 +75,62 @@ export class TasksBoardPresenter {
       taskListElement.id = columnData.id;
       appendElement(columnDiv, taskListElement);
 
-      // Filter tasks by status
-      const tasksForColumn = this.boardTasks.filter(
+      // Фильтровать задачи по статусу
+      const tasksForColumn = this.#boardTasks.filter(
         (task) => task.status === columnData.id
       );
 
-      tasksForColumn.forEach((task) => {
-        const taskComponent = new Task(task);
-        appendElement(taskListElement, taskComponent.getElement());
-      });
+      this.#renderTasksList(taskListElement, tasksForColumn);
 
-      // Add trash clear button if this is the trash column
+      // Добавить кнопку очистки корзины, если это колонка корзины
       if (columnData.id === TaskStatus.TRASH) {
-        const trashClearButton = new TrashClearButton();
-        appendElement(columnDiv, trashClearButton.getElement());
+        this.#renderTrashClearButton(columnDiv);
       }
 
       appendElement(boardElement, columnDiv);
     });
+  }
+
+  /**
+   * Рендерит одну задачу
+   * @param {HTMLElement} container - Контейнер для добавления задачи
+   * @param {Object} task - Данные задачи
+   */
+  #renderTask(container, task) {
+    const taskComponent = new Task(task);
+    appendElement(container, taskComponent.getElement());
+  }
+
+  /**
+   * Рендерит список задач или пустой плейсхолдер
+   * @param {HTMLElement} container - Контейнер для добавления задач
+   * @param {Array} tasks - Массив данных задач
+   */
+  #renderTasksList(container, tasks) {
+    if (tasks.length === 0) {
+      this.#renderEmptyList(container);
+    } else {
+      tasks.forEach((task) => {
+        this.#renderTask(container, task);
+      });
+    }
+  }
+
+  /**
+   * Рендерит кнопку очистки корзины
+   * @param {HTMLElement} container - Контейнер для добавления кнопки
+   */
+  #renderTrashClearButton(container) {
+    const trashClearButton = new TrashClearButton();
+    appendElement(container, trashClearButton.getElement());
+  }
+
+  /**
+   * Рендерит пустой плейсхолдер списка
+   * @param {HTMLElement} container - Контейнер для добавления плейсхолдера
+   */
+  #renderEmptyList(container) {
+    const emptyListComponent = new EmptyTaskList();
+    appendElement(container, emptyListComponent.getElement());
   }
 }

@@ -1,20 +1,10 @@
-import { createElement } from "../framework/render.js";
+import { AbstractComponent } from "../framework/view/abstract-component.js";
 
-export class TaskList {
+/**
+ * Компонент TaskList для размещения задач
+ */
+export class TaskList extends AbstractComponent {
   getTemplate() {
     return '<div class="tasks"></div>';
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement("div");
-      this.element.innerHTML = this.getTemplate();
-      this.element = this.element.firstChild;
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
