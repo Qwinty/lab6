@@ -1,9 +1,8 @@
 import { Header } from "./view/header.js";
 import { TaskForm } from "./view/task-form.js";
-import { Board } from "./view/board.js";
-import { TaskList } from "./view/task-list.js";
-import { Task } from "./view/task.js";
-import { appendElement, createElement } from "./framework/render.js";
+import { appendElement } from "./framework/render.js";
+import { TasksBoardPresenter } from "./presenter/tasks-board-presenter.js";
+import { TaskModel } from "./model/task-model.js";
 
 const siteBodyElement = document.body;
 const siteContainerElement = siteBodyElement.querySelector(".container");
@@ -44,64 +43,12 @@ if (newTaskHeading) {
   console.log("Appended task form to newTaskSection");
 }
 
-// Board: Replace static tasks container with the board component's element
-const staticTasksContainerElement =
-  siteContainerElement.querySelector(".tasks-container");
+// Initialize the model
+const taskModel = new TaskModel();
 
-const boardComponent = new Board();
-const boardElementFromComponent = boardComponent.getElement(); // This is the Board's <div class="tasks-container">
-
-if (staticTasksContainerElement) {
-  // Ensure the static container is empty before replacing it
-  const existingStaticTaskColumns =
-    staticTasksContainerElement.querySelectorAll(".task-column");
-  existingStaticTaskColumns.forEach((column) => column.remove());
-  staticTasksContainerElement.replaceWith(boardElementFromComponent);
-} else {
-  // Fallback: if static container not found, append to main container
-  appendElement(siteContainerElement, boardElementFromComponent);
-}
-
-// boardElement will be used to append the task columns.
-// It should refer to the element from boardComponent, which is now in the DOM.
-const boardElement = boardElementFromComponent;
-
-// Task Lists and Tasks
-const taskColumnsData = [
-  {
-    title: "Бэклог",
-    id: "backlog",
-    tasks: ["Выучить JS", "Выучить React", "Сделать домашку"],
-  },
-  {
-    title: "В процессе",
-    id: "in-progress",
-    tasks: ["Выпить смузи", "Попить воды"],
-  },
-  { title: "Готово", id: "done", tasks: ["Позвонить маме", "Погладить кота"] },
-  {
-    title: "Корзина",
-    id: "trash",
-    tasks: ["Сходить почитать", "Прочитать Войну и Мир"],
-  },
-];
-
-taskColumnsData.forEach((columnData) => {
-  const columnDiv = createElement("div", { class: "task-column" });
-
-  const columnHeaderDiv = createElement("div", { class: "column-header" }, [
-    columnData.title,
-  ]);
-  appendElement(columnDiv, columnHeaderDiv);
-
-  const taskListComponent = new TaskList();
-  const taskListElement = taskListComponent.getElement();
-  taskListElement.id = columnData.id;
-  appendElement(columnDiv, taskListElement);
-
-  columnData.tasks.forEach((taskText) => {
-    const taskComponent = new Task(taskText);
-    appendElement(taskListElement, taskComponent.getElement());
-  });
-  appendElement(boardElement, columnDiv);
-});
+// Initialize the board presenter with the model
+const tasksBoardPresenter = new TasksBoardPresenter(
+  siteContainerElement,
+  taskModel
+);
+tasksBoardPresenter.init();

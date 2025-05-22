@@ -1,12 +1,12 @@
 import { createElement } from "../framework/render.js";
 
-export class Task {
-  constructor(task) {
-    this.task = task;
+export class TrashClearButton {
+  constructor() {
+    this.element = null;
   }
 
   getTemplate() {
-    return `<div class="task">${this.task.title}</div>`;
+    return `<button class="trash-clear-button">Очистить корзину</button>`;
   }
 
   getElement() {
