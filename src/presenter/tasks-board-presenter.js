@@ -11,18 +11,50 @@ export class TasksBoardPresenter {
   #boardComponent = null;
   #taskModel = null;
   #boardTasks = [];
+  #trashClearButton = null;
 
   constructor(boardContainer, taskModel) {
     this.#boardContainer = boardContainer;
     this.#boardComponent = new Board();
     this.#taskModel = taskModel;
     this.#boardTasks = [];
+
+    // Subscribe to model changes
+    this.#taskModel.addObserver(this);
   }
 
   init() {
     // Получить задачи из модели
     this.#boardTasks = this.#taskModel.tasks;
 
+    // Render the board
+    this.#renderBoard();
+  }
+
+  /**
+   * Update method for Observer pattern
+   */
+  update() {
+    // Update local tasks from model
+    this.#boardTasks = this.#taskModel.tasks;
+
+    // Clear and re-render the board
+    this.#clearBoard();
+    this.#renderBoard();
+  }
+
+  /**
+   * Clears the board
+   */
+  #clearBoard() {
+    const boardElement = this.#boardComponent.getElement();
+    boardElement.innerHTML = "";
+  }
+
+  /**
+   * Renders the board with all task columns
+   */
+  #renderBoard() {
     // Заменить статический контейнер задач элементом компонента доски
     const staticTasksContainerElement =
       this.#boardContainer.querySelector(".tasks-container");
@@ -121,8 +153,31 @@ export class TasksBoardPresenter {
    * @param {HTMLElement} container - Контейнер для добавления кнопки
    */
   #renderTrashClearButton(container) {
-    const trashClearButton = new TrashClearButton();
-    appendElement(container, trashClearButton.getElement());
+    // Check if trash has tasks
+    const trashTasks = this.#boardTasks.filter(
+      (task) => task.status === TaskStatus.TRASH
+    );
+
+    // Only render button if there are tasks in trash
+    if (trashTasks.length > 0) {
+      this.#trashClearButton = new TrashClearButton();
+      const buttonElement = this.#trashClearButton.getElement();
+
+      // Add event listener for clearing trash
+      buttonElement.addEventListener(
+        "click",
+        this.#handleTrashClearClick.bind(this)
+      );
+
+      appendElement(container, buttonElement);
+    }
+  }
+
+  /**
+   * Handler for trash clear button click
+   */
+  #handleTrashClearClick() {
+    this.#taskModel.clearTrash();
   }
 
   /**

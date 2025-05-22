@@ -29,8 +29,14 @@ if (newTaskSection) {
   appendElement(siteContainerElement, headerComponent.getElement());
 }
 
-// Форма задачи
-const taskFormComponent = new TaskForm();
+// Инициализировать модель
+const taskModel = new TaskModel();
+
+// Форма задачи с обработчиком добавления задачи
+const taskFormComponent = new TaskForm((taskTitle) => {
+  taskModel.createTask(taskTitle);
+});
+
 // Вставить TaskForm после h2
 const newTaskHeading = newTaskSection.querySelector("h2");
 console.log("newTaskHeading", newTaskHeading);
@@ -42,9 +48,6 @@ if (newTaskHeading) {
   appendElement(newTaskSection, taskFormComponent.getElement());
   console.log("Appended task form to newTaskSection");
 }
-
-// Инициализировать модель
-const taskModel = new TaskModel();
 
 // Инициализировать презентер доски задач с моделью
 const tasksBoardPresenter = new TasksBoardPresenter(
